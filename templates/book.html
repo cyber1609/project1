@@ -1,0 +1,121 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ book.book_name }}
+{% endblock %}
+
+{% block user %}
+    {{ username }}
+{% endblock %}
+
+
+{% block main %}
+<div class="container" align=left>
+    <h4> The book <b>{{ book.book_name }} </b> was written by <i>{{ book.author }} </i> in <u>{{ book.ed_year }}</u>.</h4>
+    <h5>ISBN:{{ book.isbn }}</h5>
+    {% if gr_rating %}
+        <h6><a href="https://www.goodreads.com">goodreads.com</a> rating for <a href="https://www.goodreads.com/search?q={{ book.isbn }}">{{book.book_name }}: </a>{{ gr_rating.average }}/5 ({{ gr_rating.count }} reviews)</h5>
+    {% else %}
+        <h6><a href="https://www.goodreads.com">goodreads.com</a> rating {{book.book_name }} not available.</h5>  
+    {% endif %}
+
+</div>
+<br>
+{% if tab|length %}
+    <h5>Reviews:</h5>
+    <div class="container">
+        <div class="row justify-content-md-center" style="font-weight:bold">
+            <div class="col-3">   
+                Username
+            </div>
+            <div class="col-6">
+                Review
+            </div>
+            <div class="col-3">
+                Rating
+            </div>
+        </div>
+
+        {% for row in tab -%}
+            <div class="row justify-content-md-center">
+                <div class="col-3">   
+                    {{ row[0] }}
+                </div>
+                <div class="col-6">
+                    {{ row[1] }}
+                </div>
+                <div class="col-3">
+                    {{ row[2] }}/5
+                </div>
+            </div>
+        {%- endfor %}
+    </div>
+{% else %}
+    <h5>There are no reviews for this book. Be the first one to say something about it!</h5>
+{% endif %}       
+                
+ 
+        
+    
+         
+          
+
+
+<br>
+{% if show_form == 1 %}
+    <p>Please leave a review for this book:</p>
+    <form action="{{ url_for('book', isbn=book.isbn) }}" method="post" onsubmit="return alert('Review submitted!');">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="star-rating">
+                        <span class="fa fa-star-o" style="color:black" data-rating="1"></span>
+                        <span class="fa fa-star-o" style="color:red" data-rating="2"></span>
+                        <span class="fa fa-star-o" style="color:orange"data-rating="3"></span>
+                        <span class="fa fa-star-o" style="color:yellow"data-rating="4"></span>
+                        <span class="fa fa-star-o" style="color:green"data-rating="5"></span>
+                        <input type="hidden" name="book-rating" class="rating-value" value="5">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-lg-12">
+                    <textarea class="form-control" id="book-review" name="book-review" placeholder="Please write your review here" rows="3" cols="70"></textarea>
+                </div> 
+            </div>
+        </div>    
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+
+    <script>
+        var $star_rating = $('.star-rating .fa');
+
+        var SetRatingStar = function() {
+        return $star_rating.each(function() {
+            if (parseInt($star_rating.siblings('input.rating-value').val()) >= parseInt($(this).data('rating'))) {
+            return $(this).removeClass('fa-star-o').addClass('fa-star');
+            } else {
+            return $(this).removeClass('fa-star').addClass('fa-star-o');
+            }
+        });
+        };
+
+        $star_rating.on('click', function() {
+        $star_rating.siblings('input.rating-value').val($(this).data('rating'));
+        return SetRatingStar();
+        });
+
+        SetRatingStar();
+        $(document).ready(function() {
+
+});
+
+
+    </script>
+
+{% endif %}
+
+
+{% endblock %}
+
+
